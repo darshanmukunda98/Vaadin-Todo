@@ -1,2 +1,2 @@
 # Vaadin-Todo
-Todo App using Vaadin
+Todo App using Vaadin 24
