@@ -17,27 +17,34 @@ import java.util.List;
 
 @PageTitle("Main")
 @Route(value = "")
-public class MainView extends HorizontalLayout {
+public class MainView extends VerticalLayout {
 
     private TextField searchField;
     private Button searchButton;
     private HorizontalLayout mainApp;
     public VerticalLayout displayTodos;
-    private List<Todo> todos = new ArrayList<>();
+    private H1 appH1;
 
     public MainView() {
         initComponents();
         searchButtonListener();
         mainApp.add(searchField,searchButton);
+        add(appH1,mainApp,displayTodos);
     }
     public void searchButtonListener(){
         searchButton.addClickListener(buttonClickEvent -> {
-            Todo todo = new Todo(String.valueOf(Math.random()), searchField.getValue(),false, false);
-            todos.add(todo);
+            if(!searchField.getValue().equals("")) {
+                Todo todo = new Todo(searchField.getValue(), false, false);
+                String id = TodoModel.insert(todo);
+                displayTodos.add(new TodoItem(id, todo.isDone(), todo.getTitle(), todo.isDeleted()));
+                searchField.clear();
+            }else {
+                Notification.show("Enter Something");
+            }
         });
     }
     private void initComponents(){
-        H1 appH1 = new H1("Todo");
+        appH1 = new H1("Todo");
         setAlignItems(Alignment.CENTER);
         Icon icon = new Icon(VaadinIcon.SEARCH);
         searchButton = new Button(icon);
