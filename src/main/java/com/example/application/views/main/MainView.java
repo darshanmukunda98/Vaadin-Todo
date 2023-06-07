@@ -31,6 +31,7 @@ public class MainView extends VerticalLayout {
         mainApp.add(searchField,searchButton);
         add(appH1,mainApp,displayTodos);
         this.getStyle().set("background-color","#b3e6ff");
+        setSizeFull();
     }
     public void searchButtonListener(){
         searchButton.addClickListener(buttonClickEvent -> {

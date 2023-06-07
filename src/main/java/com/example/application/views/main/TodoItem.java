@@ -96,15 +96,17 @@ public class TodoItem extends VerticalLayout {
     private HorizontalLayout mainTodo(boolean done,String todoTitle,boolean deleted){
         mainTodo = new HorizontalLayout();
         mainTodo.setWidthFull();
-        mainTodo.getStyle().set("border-bottom","solid");
         mainTodo.setPadding(false);
         mainTodo.setSpacing(false);
         expand = new Div();
         expand.addClickListener((divClickEvent -> {
-            if(!todoDetails.isVisible())
+            if (!todoDetails.isVisible()) {
                 todoDetails.setVisible(true);
-            else
+                todoDetails.getStyle().set("border-top", "1px solid");
+            } else{
                 todoDetails.setVisible(false);
+                todoDetails.getStyle().set("border-top","none");
+            }
         }));
         expand.setWidth("36%");
         mainTodo.add(todoDone(done),todoTitle(todoTitle),expand,todoDeleted(deleted));
