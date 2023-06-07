@@ -2,6 +2,7 @@ package com.example.application.views.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class TodoModel {
     private static List<Todo> todos = new ArrayList<>();
@@ -11,7 +12,7 @@ public class TodoModel {
     }
 
     public static String insert(Todo item) {
-        item.setId(String.valueOf(Math.random()));
+        item.setId(String.valueOf(UUID.randomUUID()));
         todos.add(item);
         return item.getId();
     }
