@@ -30,13 +30,16 @@ public class MainView extends VerticalLayout {
         searchButtonListener();
         mainApp.add(searchField,searchButton);
         add(appH1,mainApp,displayTodos);
+        this.getStyle().set("background-color","#b3e6ff");
     }
     public void searchButtonListener(){
         searchButton.addClickListener(buttonClickEvent -> {
             if(!searchField.getValue().equals("")) {
                 Todo todo = new Todo(searchField.getValue(), false, false);
                 String id = TodoModel.insert(todo);
-                displayTodos.add(new TodoItem(id, todo.isDone(), todo.getTitle(), todo.isDeleted()));
+                TodoItem todoItem = new TodoItem(id, todo.isDone(), todo.getTitle(), todo.isDeleted());
+                todoItem.setWidth("50%");
+                displayTodos.add(todoItem);
                 searchField.clear();
             }else {
                 Notification.show("Enter Something");
@@ -53,6 +56,7 @@ public class MainView extends VerticalLayout {
         searchButton.addClickShortcut(Key.ENTER);
         mainApp = new HorizontalLayout();
         displayTodos = new VerticalLayout();
+        displayTodos.setAlignItems(Alignment.CENTER);
     }
 
 }

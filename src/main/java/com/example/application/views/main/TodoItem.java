@@ -29,19 +29,10 @@ public class TodoItem extends VerticalLayout {
     private String id;
     public TodoItem(String id, boolean done, String todoTitle, boolean deleted){
         this.id = id;
-//        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-        expand = new Div();
-        expand.addClickListener((divClickEvent -> {
-            if(!todoDetails.isVisible())
-                todoDetails.setVisible(true);
-            else
-                todoDetails.setVisible(false);
-        }));
-        expand.setWidth("36%");
         setAlignItems(Alignment.CENTER);
         add(mainTodo(done,todoTitle,deleted),todoDetails());
         setWidthFull();
-        this.getStyle().set("border-style","solid");
+        this.getStyle().set("background-color","#808080");
         setId(id);
     }
     private TextField todoTitle(String todoTitle){
@@ -80,26 +71,42 @@ public class TodoItem extends VerticalLayout {
     }
     private HorizontalLayout todoDetails(){
         todoDetails = new HorizontalLayout();
-        todoDetails.setWidth("50%");
+        todoDetails.setWidthFull();
         todoDetails.setVisible(false);
         todoNotes = new TextArea("Notes");
         todoNotes.setWidthFull();
         todoToday = new Button("Today");
         todoTomorrow = new Button("Tomorrow");
-        todoDate = new DatePicker("No Date Set");
+        todoDate = new DatePicker("Due Date");
+        todoDate.setPlaceholder("No Date Set");
         todoPriority = new Select("Priority",(event)->{
             System.out.println(event.getValue());},"None","High","Medium","Low");
         VerticalLayout vlayout = new VerticalLayout();
+        vlayout.setSpacing(false);
+        vlayout.setPadding(false);
         vlayout.setAlignItems(FlexComponent.Alignment.END);
         HorizontalLayout hLayout = new HorizontalLayout(todoToday,todoTomorrow,todoDate);
         hLayout.setAlignItems(Alignment.BASELINE);
+        hLayout.setSpacing(false);
+        hLayout.setPadding(false);
         vlayout.add(hLayout,todoPriority);
         todoDetails.add(todoNotes,vlayout);
         return todoDetails;
     }
     private HorizontalLayout mainTodo(boolean done,String todoTitle,boolean deleted){
         mainTodo = new HorizontalLayout();
-        mainTodo.setWidth("50%");
+        mainTodo.setWidthFull();
+        mainTodo.getStyle().set("border-bottom","solid");
+        mainTodo.setPadding(false);
+        mainTodo.setSpacing(false);
+        expand = new Div();
+        expand.addClickListener((divClickEvent -> {
+            if(!todoDetails.isVisible())
+                todoDetails.setVisible(true);
+            else
+                todoDetails.setVisible(false);
+        }));
+        expand.setWidth("36%");
         mainTodo.add(todoDone(done),todoTitle(todoTitle),expand,todoDeleted(deleted));
         return mainTodo;
     }
