@@ -81,6 +81,7 @@ public class TodoItem extends VerticalLayout {
         todoDate.setPlaceholder("No Date Set");
         todoPriority = new Select("Priority",(event)->{
             System.out.println(event.getValue());},"None","High","Medium","Low");
+        todoPriority.setValue("None");
         VerticalLayout vlayout = new VerticalLayout();
         vlayout.setSpacing(false);
         vlayout.setPadding(false);
