@@ -27,18 +27,19 @@ public class MainView extends VerticalLayout {
 
     public MainView() {
         initComponents();
+        loadTodos();
         searchButtonListener();
         mainApp.add(searchField,searchButton);
         add(appH1,mainApp,displayTodos);
-        this.getStyle().set("background-color","#b3e6ff");
+//        this.getStyle().set("background-color","#b3e6ff");
         setSizeFull();
     }
     public void searchButtonListener(){
         searchButton.addClickListener(buttonClickEvent -> {
             if(!searchField.getValue().equals("")) {
-                Todo todo = new Todo(searchField.getValue(), false, false);
+                Todo todo = new Todo( false,searchField.getValue(), false,"","","");
                 String id = TodoModel.insert(todo);
-                TodoItem todoItem = new TodoItem(id, todo.isDone(), todo.getTitle(), todo.isDeleted());
+                TodoItem todoItem = new TodoItem(id, todo.isDone(), todo.getTitle(), todo.isDeleted(),todo.getNotes(),todo.getDate(),todo.getPriority());
                 todoItem.setWidth("50%");
                 displayTodos.add(todoItem);
                 searchField.clear();
@@ -58,6 +59,15 @@ public class MainView extends VerticalLayout {
         mainApp = new HorizontalLayout();
         displayTodos = new VerticalLayout();
         displayTodos.setAlignItems(Alignment.CENTER);
+    }
+    public void loadTodos(){
+        for(Todo todo:TodoModel.findAll()){
+          displayTodos.add();
+            TodoItem todoItem = new TodoItem(todo.getId(), todo.isDone(), todo.getTitle(), todo.isDeleted(),todo.getNotes(),todo.getDate(),todo.getPriority());
+            todoItem.setWidth("50%");
+            displayTodos.add(todoItem);
+        }
+
     }
 
 }
