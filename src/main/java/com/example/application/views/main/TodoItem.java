@@ -4,14 +4,18 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.datepicker.DatePickerVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.select.SelectVariant;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextAreaVariant;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -37,9 +41,13 @@ public class TodoItem extends VerticalLayout {
         setWidthFull();
 //        this.getStyle().set("background-color","#808080");
         setId(id);
+        getStyle().set("border","1px solid");
+        setSpacing(false);
+        setPadding(false);
     }
     private TextField todoTitle(String todoTitle){
         todoTitleTextField = new TextField();
+        todoTitleTextField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
         todoTitleTextField.setWidth("50%");
         todoTitleTextField.setValue(todoTitle);
         todoTitleTextField.addValueChangeListener(event->{
@@ -65,6 +73,7 @@ public class TodoItem extends VerticalLayout {
     }
     private Button todoDeleted(boolean deleted){
         todoDeletedButton = new Button(new Icon(VaadinIcon.CLOSE));
+        todoDeletedButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
         todoDeletedButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         todoDeletedButton.addClickListener(buttonClickEvent -> {
             TodoModel.update(id, String.valueOf(true),"deleted");
@@ -74,6 +83,7 @@ public class TodoItem extends VerticalLayout {
     }
     private TextArea todoNotes(String notes){
         todoNotes = new TextArea("Notes");
+        todoNotes.addThemeVariants(TextAreaVariant.LUMO_SMALL);
         todoNotes.setWidthFull();
         todoNotes.setValue(notes);
         todoNotes.addValueChangeListener(event->{
@@ -83,6 +93,7 @@ public class TodoItem extends VerticalLayout {
     }
     private Button todoToday(){
         todoToday = new Button("Today");
+        todoToday.addThemeVariants(ButtonVariant.LUMO_SMALL);
         todoToday.addClickListener(buttonClickEvent -> {
            TodoModel.updateDate(id,LocalDate.now().toString());
            todoDate.setValue(LocalDate.now());
@@ -91,6 +102,7 @@ public class TodoItem extends VerticalLayout {
     }
     private Button todoTomorrow(){
         todoTomorrow = new Button("Tomorrow");
+        todoTomorrow.addThemeVariants(ButtonVariant.LUMO_SMALL);
         todoTomorrow.addClickListener(buttonClickEvent -> {
             TodoModel.updateDate(id,LocalDate.now().plusDays(1).toString());
             todoDate.setValue(LocalDate.now().plusDays(1));
@@ -99,6 +111,7 @@ public class TodoItem extends VerticalLayout {
     }
     private DatePicker todoDate(String date){
         todoDate = new DatePicker("Due Date");
+        todoDate.addThemeVariants(DatePickerVariant.LUMO_SMALL);
         if (date.equals("")) {
             todoDate.setPlaceholder("No Date Set");
         }else {
@@ -111,6 +124,7 @@ public class TodoItem extends VerticalLayout {
     }
     private Select<String> todoPriority(String priority){
         todoPriority = new Select<>();
+        todoPriority.addThemeVariants(SelectVariant.LUMO_SMALL);
         todoPriority.setLabel("Priority");
         todoPriority.setItems(List.of("None","High","Medium","Low"));
         todoPriority.setValue(priority);
@@ -130,6 +144,8 @@ public class TodoItem extends VerticalLayout {
         date_PriorityLayout.setPadding(false);
         date_PriorityLayout.setAlignItems(Alignment.CENTER);
         todoDetails = new HorizontalLayout(todoNotes(notes),date_PriorityLayout);
+        todoDetails.setPadding(false);
+        todoDetails.setSpacing(false);
         todoDetails.setWidthFull();
         todoDetails.setVisible(false);
         return todoDetails;
@@ -149,7 +165,7 @@ public class TodoItem extends VerticalLayout {
                 todoDetails.getStyle().set("border-top","none");
             }
         }));
-        expand.setWidth("42%");
+        expand.setWidth("43%");
         mainTodo.add(todoDone(done),todoTitle(todoTitle),expand,todoDeleted(deleted));
         return mainTodo;
     }

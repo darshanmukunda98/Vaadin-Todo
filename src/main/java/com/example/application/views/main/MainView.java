@@ -2,6 +2,8 @@ package com.example.application.views.main;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.charts.themes.LumoDarkTheme;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -9,8 +11,10 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.Theme;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +57,9 @@ public class MainView extends VerticalLayout {
         setAlignItems(Alignment.CENTER);
         Icon icon = new Icon(VaadinIcon.SEARCH);
         searchButton = new Button(icon);
+        searchButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
         searchField = new TextField();
+        searchField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
         searchField.setWidthFull();
         searchButton.addClickShortcut(Key.ENTER);
         mainApp = new HorizontalLayout();
