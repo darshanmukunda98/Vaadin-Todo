@@ -35,8 +35,8 @@ public class TodoItem extends VerticalLayout {
     public Select todoPriority;
     public HorizontalLayout todoDetails;
     public HorizontalLayout mainTodo;
-    public Div expand;
-    public Div nonExpand;
+    public HorizontalLayout expand;
+    public HorizontalLayout nonExpand;
     private String id;
     public TodoItem(String id, boolean done, String todoTitle, boolean deleted,String notes,String date,String priority){
         this.id = id;
@@ -50,7 +50,6 @@ public class TodoItem extends VerticalLayout {
         setPadding(false);
     }
     private TextField todoTitleNotCompleted(String todoTitle) {
-
             todoTitleTextField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
             todoTitleTextField.setWidth("50%");
             todoTitleTextField.setValue(todoTitle);
@@ -84,6 +83,7 @@ public class TodoItem extends VerticalLayout {
             }
             else {
                 todoTitleTextField = new TextField();
+                todoTitleTextField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
                 todoTitleTextField.setValue(todoTitleSpan.getText());
                 mainTodo.remove(todoTitleSpan);
                 mainTodo.addComponentAtIndex(1,todoTitleTextField);
@@ -194,12 +194,16 @@ public class TodoItem extends VerticalLayout {
     }
     private HorizontalLayout mainTodo(boolean done,String todoTitle,boolean deleted){
         mainTodo = new HorizontalLayout();
-        mainTodo.setAlignItems(Alignment.CENTER);
+        mainTodo.setAlignSelf(Alignment.CENTER,todoDoneCheckBox,todoTitleTextField,todoTitleSpan);
         mainTodo.setWidthFull();
         mainTodo.setPadding(false);
         mainTodo.setSpacing(false);
-        expand = new Div();
-        nonExpand = new Div();
+        expand = new HorizontalLayout(new Icon(VaadinIcon.CHEVRON_DOWN_SMALL));
+        expand.setJustifyContentMode(JustifyContentMode.END);
+        expand.setAlignItems(Alignment.CENTER);
+        nonExpand = new HorizontalLayout(new Icon(VaadinIcon.CHEVRON_UP_SMALL));
+        nonExpand.setJustifyContentMode(JustifyContentMode.END);
+        nonExpand.setAlignItems(Alignment.CENTER);
         expand.addClickListener((divClickEvent -> {
             if (!todoDetails.isVisible()) {
                 todoDetails.setVisible(true);
