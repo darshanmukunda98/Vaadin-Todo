@@ -12,9 +12,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,15 @@ public class MainView extends VerticalLayout {
         initComponents();
         loadTodos();
         searchButtonListener();
-        mainApp.add(searchField,searchButton);
+        Button toggleButton = new Button("",new Icon(VaadinIcon.ADJUST), click -> {
+            ThemeList themeList = getElement().getThemeList();
+            if (themeList.contains(Lumo.DARK)) {
+                themeList.remove(Lumo.DARK);
+            } else {
+                themeList.add(Lumo.DARK);
+            }
+        });
+        mainApp.add(toggleButton,searchField,searchButton);
         add(appH1,mainApp,displayTodos);
 //        this.getStyle().set("background-color","#b3e6ff");
         setSizeFull();
@@ -53,7 +63,7 @@ public class MainView extends VerticalLayout {
         });
     }
     private void initComponents(){
-        appH1 = new H1("Todo");
+        appH1 = new H1("To Done!");
         setAlignItems(Alignment.CENTER);
         Icon icon = new Icon(VaadinIcon.SEARCH);
         searchButton = new Button(icon);

@@ -6,6 +6,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datepicker.DatePickerVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -16,6 +17,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextAreaVariant;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.shared.Registration;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -23,6 +25,7 @@ import java.util.List;
 
 public class TodoItem extends VerticalLayout {
     public TextField todoTitleTextField;
+    public Span todoTitleSpan;
     public Checkbox todoDoneCheckBox;
     public Button todoDeletedButton;
     public TextArea todoNotes;
@@ -33,46 +36,69 @@ public class TodoItem extends VerticalLayout {
     public HorizontalLayout todoDetails;
     public HorizontalLayout mainTodo;
     public Div expand;
+    public Div nonExpand;
     private String id;
     public TodoItem(String id, boolean done, String todoTitle, boolean deleted,String notes,String date,String priority){
         this.id = id;
-        setAlignItems(Alignment.CENTER);
+        getStyle().set("border","1px solid");
+        initComponents();
         add(mainTodo(done,todoTitle,deleted),todoDetails(notes,date,priority));
         setWidthFull();
 //        this.getStyle().set("background-color","#808080");
         setId(id);
-        getStyle().set("border","1px solid");
         setSpacing(false);
         setPadding(false);
     }
-    private TextField todoTitle(String todoTitle){
-        todoTitleTextField = new TextField();
-        todoTitleTextField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
-        todoTitleTextField.setWidth("50%");
-        todoTitleTextField.setValue(todoTitle);
-        todoTitleTextField.addValueChangeListener(event->{
-            TodoModel.update(id,event.getValue(),"title");
-        });
-        return todoTitleTextField;
+    private TextField todoTitleNotCompleted(String todoTitle) {
+
+            todoTitleTextField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+            todoTitleTextField.setWidth("50%");
+            todoTitleTextField.setValue(todoTitle);
+            todoTitleTextField.addValueChangeListener(event -> {
+                TodoModel.update(id, event.getValue(), "title");
+            });
+            return todoTitleTextField;
+
+    }
+    private Span todoTitleCompleted(String todoTitle){
+
+        todoTitleSpan.setText(todoTitle);
+        todoTitleSpan.getStyle().set("text-decoration", "line-through");
+//        todoTitleSpan.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+        todoTitleSpan.setWidth("50%");
+        return todoTitleSpan;
     }
     private Checkbox todoDone(boolean done){
-        todoDoneCheckBox = new Checkbox();
+
         todoDoneCheckBox.setValue(done);
         todoDoneCheckBox.addValueChangeListener(event ->{
             if(event.getValue()) {
-                todoTitleTextField.getStyle().set("text-decoration", "line-through");
-                todoTitleTextField.setReadOnly(true);
+                mainTodo.remove(todoTitleTextField);
+                todoTitleSpan.setText(todoTitleTextField.getValue());
+                mainTodo.addComponentAtIndex(1,todoTitleSpan);
+                todoTitleSpan.getStyle().set("text-decoration", "line-through");
+//                todoTitleTextField.setReadOnly(true);
+                todoTitleSpan.setWidth("50%");
+                mainTodo.remove(expand);
+                mainTodo.addComponentAtIndex(2,nonExpand);
             }
             else {
-                todoTitleTextField.getStyle().set("text-decoration", "none");
-                todoTitleTextField.setReadOnly(false);
+                todoTitleTextField = new TextField();
+                todoTitleTextField.setValue(todoTitleSpan.getText());
+                mainTodo.remove(todoTitleSpan);
+                mainTodo.addComponentAtIndex(1,todoTitleTextField);
+//                todoTitleTextField.getStyle().set("text-decoration", "none");
+//                todoTitleTextField.setReadOnly(false);
+                todoTitleTextField.setWidth("50%");
+                mainTodo.remove(nonExpand);
+                mainTodo.addComponentAtIndex(2,expand);
             }
             TodoModel.update(id, String.valueOf(event.getValue()),"done");
         });
         return todoDoneCheckBox;
     }
     private Button todoDeleted(boolean deleted){
-        todoDeletedButton = new Button(new Icon(VaadinIcon.CLOSE));
+
         todoDeletedButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
         todoDeletedButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         todoDeletedButton.addClickListener(buttonClickEvent -> {
@@ -82,7 +108,7 @@ public class TodoItem extends VerticalLayout {
         return todoDeletedButton;
     }
     private TextArea todoNotes(String notes){
-        todoNotes = new TextArea("Notes");
+
         todoNotes.addThemeVariants(TextAreaVariant.LUMO_SMALL);
         todoNotes.setWidthFull();
         todoNotes.setValue(notes);
@@ -92,7 +118,7 @@ public class TodoItem extends VerticalLayout {
         return todoNotes;
     }
     private Button todoToday(){
-        todoToday = new Button("Today");
+
         todoToday.addThemeVariants(ButtonVariant.LUMO_SMALL);
         todoToday.addClickListener(buttonClickEvent -> {
            TodoModel.updateDate(id,LocalDate.now().toString());
@@ -101,7 +127,7 @@ public class TodoItem extends VerticalLayout {
         return todoToday;
     }
     private Button todoTomorrow(){
-        todoTomorrow = new Button("Tomorrow");
+
         todoTomorrow.addThemeVariants(ButtonVariant.LUMO_SMALL);
         todoTomorrow.addClickListener(buttonClickEvent -> {
             TodoModel.updateDate(id,LocalDate.now().plusDays(1).toString());
@@ -110,7 +136,7 @@ public class TodoItem extends VerticalLayout {
         return todoTomorrow;
     }
     private DatePicker todoDate(String date){
-        todoDate = new DatePicker("Due Date");
+
         todoDate.addThemeVariants(DatePickerVariant.LUMO_SMALL);
         if (date.equals("")) {
             todoDate.setPlaceholder("No Date Set");
@@ -123,12 +149,28 @@ public class TodoItem extends VerticalLayout {
         return todoDate;
     }
     private Select<String> todoPriority(String priority){
-        todoPriority = new Select<>();
+
         todoPriority.addThemeVariants(SelectVariant.LUMO_SMALL);
         todoPriority.setLabel("Priority");
         todoPriority.setItems(List.of("None","High","Medium","Low"));
         todoPriority.setValue(priority);
+        getStyle().set("border-left-style","solid");
+        getStyle().set( "border-left-width","thick");
+        switch( priority ){
+            case "High"-> getStyle().set("border-left-color","red");
+            case "Medium" -> getStyle().set("border-left-color","orange");
+            case "Low" -> getStyle().set("border-left-color","blue");
+            case "None" -> getStyle().set("border-left-color","none");
+        }
         todoPriority.addValueChangeListener(event->{
+            getStyle().set("border-left-style","solid");
+            getStyle().set( "border-left-width","thick");
+            switch( (String) event.getValue()){
+                case "High"-> getStyle().set("border-left-color","red");
+                case "Medium" -> getStyle().set("border-left-color","orange");
+                case "Low" -> getStyle().set("border-left-color","blue");
+                case "None" -> getStyle().set("border-left-color","none");
+            }
             TodoModel.updatePriority(id, (String) event.getValue());
         });
         return todoPriority;
@@ -152,10 +194,12 @@ public class TodoItem extends VerticalLayout {
     }
     private HorizontalLayout mainTodo(boolean done,String todoTitle,boolean deleted){
         mainTodo = new HorizontalLayout();
+        mainTodo.setAlignItems(Alignment.CENTER);
         mainTodo.setWidthFull();
         mainTodo.setPadding(false);
         mainTodo.setSpacing(false);
         expand = new Div();
+        nonExpand = new Div();
         expand.addClickListener((divClickEvent -> {
             if (!todoDetails.isVisible()) {
                 todoDetails.setVisible(true);
@@ -166,7 +210,22 @@ public class TodoItem extends VerticalLayout {
             }
         }));
         expand.setWidth("43%");
-        mainTodo.add(todoDone(done),todoTitle(todoTitle),expand,todoDeleted(deleted));
+        nonExpand.setWidth("43%");
+        if(done)
+            mainTodo.add(todoDone(done),todoTitleCompleted(todoTitle),nonExpand,todoDeleted(deleted));
+        else
+            mainTodo.add(todoDone(done),todoTitleNotCompleted(todoTitle),expand,todoDeleted(deleted));
         return mainTodo;
+    }
+    private void initComponents(){
+        todoDoneCheckBox = new Checkbox();
+        todoTitleSpan = new Span();
+        todoTitleTextField = new TextField();
+        todoDeletedButton = new Button(new Icon(VaadinIcon.CLOSE));
+        todoNotes = new TextArea("Notes");
+        todoToday = new Button("Today");
+        todoTomorrow = new Button("Tomorrow");
+        todoDate = new DatePicker("Due Date");
+        todoPriority = new Select<>();
     }
 }
