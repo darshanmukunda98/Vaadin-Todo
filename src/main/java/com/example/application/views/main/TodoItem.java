@@ -44,7 +44,6 @@ public class TodoItem extends VerticalLayout {
         initComponents();
         add(mainTodo(done,todoTitle,deleted),todoDetails(notes,date,priority));
         setWidthFull();
-//        this.getStyle().set("background-color","#808080");
         setId(id);
         setSpacing(false);
         setPadding(false);
@@ -63,7 +62,6 @@ public class TodoItem extends VerticalLayout {
 
         todoTitleSpan.setText(todoTitle);
         todoTitleSpan.getStyle().set("text-decoration", "line-through");
-//        todoTitleSpan.getElement().addThemeVariants(TextFieldVariant.LUMO_SMALL);
         todoTitleSpan.setWidth("50%");
         return todoTitleSpan;
     }
@@ -73,33 +71,12 @@ public class TodoItem extends VerticalLayout {
         todoDoneCheckBox.addValueChangeListener(event ->{
             if(event.getValue()) {
                 mainTodo.remove(todoTitleTextField);
-/*                todoTitleSpan.setText(todoTitleTextField.getValue());
-
-                todoTitleSpan.getStyle().set("text-decoration", "line-through");
-//                todoTitleTextField.setReadOnly(true);
-                todoTitleSpan.setWidth("50%");*/
                 mainTodo.addComponentAtIndex(1,todoTitleCompleted(todoTitleTextField.getValue()));
-//                mainTodo.remove(expand);
-/*                nonExpand = new HorizontalLayout(new Icon(VaadinIcon.CHEVRON_UP_SMALL));
-                nonExpand.setJustifyContentMode(JustifyContentMode.END);
-                nonExpand.setAlignItems(Alignment.CENTER);*/
-//                mainTodo.addComponentAtIndex(2,getNonExpand());
                 expand.setEnabled(false);
             }
             else {
-/*                todoTitleTextField = new TextField();
-                todoTitleTextField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
-                todoTitleTextField.setValue(todoTitleSpan.getText());*/
                 mainTodo.remove(todoTitleSpan);
                 mainTodo.addComponentAtIndex(1,todoTitleNotCompleted(todoTitleSpan.getText()));
-//                todoTitleTextField.getStyle().set("text-decoration", "none");
-//                todoTitleTextField.setReadOnly(false);
-//                todoTitleTextField.setWidth("50%");
-//                mainTodo.remove(nonExpand);
-/*                expand = new HorizontalLayout(new Icon(VaadinIcon.CHEVRON_DOWN_SMALL));
-                expand.setJustifyContentMode(JustifyContentMode.END);
-                expand.setAlignItems(Alignment.CENTER);*/
-//                mainTodo.addComponentAtIndex(2,getExpand());
                 expand.setEnabled(true);
             }
             TodoModel.update(id, String.valueOf(event.getValue()),"done");
