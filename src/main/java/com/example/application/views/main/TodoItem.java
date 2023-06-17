@@ -63,7 +63,7 @@ public class TodoItem extends VerticalLayout {
 
         todoTitleSpan.setText(todoTitle);
         todoTitleSpan.getStyle().set("text-decoration", "line-through");
-//        todoTitleSpan.addThemeVariants(TextFieldVariant.LUMO_SMALL);
+//        todoTitleSpan.getElement().addThemeVariants(TextFieldVariant.LUMO_SMALL);
         todoTitleSpan.setWidth("50%");
         return todoTitleSpan;
     }
@@ -73,25 +73,34 @@ public class TodoItem extends VerticalLayout {
         todoDoneCheckBox.addValueChangeListener(event ->{
             if(event.getValue()) {
                 mainTodo.remove(todoTitleTextField);
-                todoTitleSpan.setText(todoTitleTextField.getValue());
-                mainTodo.addComponentAtIndex(1,todoTitleSpan);
+/*                todoTitleSpan.setText(todoTitleTextField.getValue());
+
                 todoTitleSpan.getStyle().set("text-decoration", "line-through");
 //                todoTitleTextField.setReadOnly(true);
-                todoTitleSpan.setWidth("50%");
-                mainTodo.remove(expand);
-                mainTodo.addComponentAtIndex(2,nonExpand);
+                todoTitleSpan.setWidth("50%");*/
+                mainTodo.addComponentAtIndex(1,todoTitleCompleted(todoTitleTextField.getValue()));
+//                mainTodo.remove(expand);
+/*                nonExpand = new HorizontalLayout(new Icon(VaadinIcon.CHEVRON_UP_SMALL));
+                nonExpand.setJustifyContentMode(JustifyContentMode.END);
+                nonExpand.setAlignItems(Alignment.CENTER);*/
+//                mainTodo.addComponentAtIndex(2,getNonExpand());
+                expand.setEnabled(false);
             }
             else {
-                todoTitleTextField = new TextField();
+/*                todoTitleTextField = new TextField();
                 todoTitleTextField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
-                todoTitleTextField.setValue(todoTitleSpan.getText());
+                todoTitleTextField.setValue(todoTitleSpan.getText());*/
                 mainTodo.remove(todoTitleSpan);
-                mainTodo.addComponentAtIndex(1,todoTitleTextField);
+                mainTodo.addComponentAtIndex(1,todoTitleNotCompleted(todoTitleSpan.getText()));
 //                todoTitleTextField.getStyle().set("text-decoration", "none");
 //                todoTitleTextField.setReadOnly(false);
-                todoTitleTextField.setWidth("50%");
-                mainTodo.remove(nonExpand);
-                mainTodo.addComponentAtIndex(2,expand);
+//                todoTitleTextField.setWidth("50%");
+//                mainTodo.remove(nonExpand);
+/*                expand = new HorizontalLayout(new Icon(VaadinIcon.CHEVRON_DOWN_SMALL));
+                expand.setJustifyContentMode(JustifyContentMode.END);
+                expand.setAlignItems(Alignment.CENTER);*/
+//                mainTodo.addComponentAtIndex(2,getExpand());
+                expand.setEnabled(true);
             }
             TodoModel.update(id, String.valueOf(event.getValue()),"done");
         });
@@ -160,7 +169,10 @@ public class TodoItem extends VerticalLayout {
             case "High"-> getStyle().set("border-left-color","red");
             case "Medium" -> getStyle().set("border-left-color","orange");
             case "Low" -> getStyle().set("border-left-color","blue");
-            case "None" -> getStyle().set("border-left-color","none");
+            case "None" -> {
+                getStyle().set("border-left-color","unset");
+                getStyle().set( "border-left-width","thin");
+            }
         }
         todoPriority.addValueChangeListener(event->{
             getStyle().set("border-left-style","solid");
@@ -169,7 +181,10 @@ public class TodoItem extends VerticalLayout {
                 case "High"-> getStyle().set("border-left-color","red");
                 case "Medium" -> getStyle().set("border-left-color","orange");
                 case "Low" -> getStyle().set("border-left-color","blue");
-                case "None" -> getStyle().set("border-left-color","none");
+                case "None" -> {
+                    getStyle().set("border-left-color","unset");
+                    getStyle().set( "border-left-width","thin");
+                }
             }
             TodoModel.updatePriority(id, (String) event.getValue());
         });
@@ -198,27 +213,13 @@ public class TodoItem extends VerticalLayout {
         mainTodo.setWidthFull();
         mainTodo.setPadding(false);
         mainTodo.setSpacing(false);
-        expand = new HorizontalLayout(new Icon(VaadinIcon.CHEVRON_DOWN_SMALL));
-        expand.setJustifyContentMode(JustifyContentMode.END);
-        expand.setAlignItems(Alignment.CENTER);
-        nonExpand = new HorizontalLayout(new Icon(VaadinIcon.CHEVRON_UP_SMALL));
-        nonExpand.setJustifyContentMode(JustifyContentMode.END);
-        nonExpand.setAlignItems(Alignment.CENTER);
-        expand.addClickListener((divClickEvent -> {
-            if (!todoDetails.isVisible()) {
-                todoDetails.setVisible(true);
-                todoDetails.getStyle().set("border-top", "1px solid");
-            } else{
-                todoDetails.setVisible(false);
-                todoDetails.getStyle().set("border-top","none");
-            }
-        }));
-        expand.setWidth("43%");
-        nonExpand.setWidth("43%");
+
         if(done)
-            mainTodo.add(todoDone(done),todoTitleCompleted(todoTitle),nonExpand,todoDeleted(deleted));
+            mainTodo.add(todoDone(done),todoTitleCompleted(todoTitle),getExpand(),todoDeleted(deleted));
         else
-            mainTodo.add(todoDone(done),todoTitleNotCompleted(todoTitle),expand,todoDeleted(deleted));
+            mainTodo.add(todoDone(done),todoTitleNotCompleted(todoTitle),getExpand(),todoDeleted(deleted));
+
+
         return mainTodo;
     }
     private void initComponents(){
@@ -231,5 +232,45 @@ public class TodoItem extends VerticalLayout {
         todoTomorrow = new Button("Tomorrow");
         todoDate = new DatePicker("Due Date");
         todoPriority = new Select<>();
+        expand = new HorizontalLayout(new Icon(VaadinIcon.CHEVRON_DOWN_SMALL));
+        nonExpand = new HorizontalLayout(new Icon(VaadinIcon.CHEVRON_UP_SMALL));
+    }
+    private HorizontalLayout getNonExpand(){
+        nonExpand.setJustifyContentMode(JustifyContentMode.END);
+        nonExpand.setAlignItems(Alignment.CENTER);
+        nonExpand.setWidth("43%");
+        nonExpand.addClickListener((divClickEvent -> {
+            if (!todoDetails.isVisible()) {
+                todoDetails.setVisible(true);
+                todoDetails.getStyle().set("border-top", "1px solid");
+                mainTodo.addComponentAtIndex(2,getNonExpand());
+                mainTodo.remove(expand);
+            } else{
+                todoDetails.setVisible(false);
+                todoDetails.getStyle().set("border-top","none");
+                mainTodo.addComponentAtIndex(2,getExpand());
+                mainTodo.remove(nonExpand);
+            }
+        }));
+        return nonExpand;
+    }
+    private HorizontalLayout getExpand(){
+        expand.setJustifyContentMode(JustifyContentMode.END);
+        expand.setAlignItems(Alignment.CENTER);
+        expand.setWidth("43%");
+        expand.addClickListener((divClickEvent -> {
+            if (!todoDetails.isVisible()) {
+                todoDetails.setVisible(true);
+                todoDetails.getStyle().set("border-top", "1px solid");
+                mainTodo.addComponentAtIndex(2,getNonExpand());
+                mainTodo.remove(expand);
+            } else{
+                todoDetails.setVisible(false);
+                todoDetails.getStyle().set("border-top","none");
+                mainTodo.addComponentAtIndex(2,getExpand());
+                mainTodo.remove(nonExpand);
+            }
+        }));
+        return expand;
     }
 }
