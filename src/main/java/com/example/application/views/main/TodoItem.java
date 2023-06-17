@@ -141,7 +141,11 @@ public class TodoItem extends VerticalLayout {
         todoPriority.setItems(List.of("None","High","Medium","Low"));
         todoPriority.setValue(priority);
         getStyle().set("border-left-style","solid");
-        getStyle().set( "border-left-width","thick");
+        if(!priority.equals(""))
+            getStyle().set( "border-left-width","thick");
+        else
+            getStyle().set( "border-left-width","thin");
+
         switch( priority ){
             case "High"-> getStyle().set("border-left-color","red");
             case "Medium" -> getStyle().set("border-left-color","orange");
